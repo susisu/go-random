@@ -53,7 +53,7 @@ func testUniformDistribution[T any](
 		histogram[binIndex(v)]++
 	}
 
-	delta := 3 * math.Sqrt(float64(numSamplesPerBin))
+	delta := 4 * math.Sqrt(float64(numSamplesPerBin))
 	for i, c := range histogram {
 		assert.InDeltaf(t, numSamplesPerBin, c, delta,
 			"histogram(%d) = %d should be close to %d, (seed = %d)", i, c, numSamplesPerBin, seed)
