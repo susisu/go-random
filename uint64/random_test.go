@@ -20,7 +20,7 @@ type real interface {
 
 func testSnapshot[T any](t *testing.T, generate func(g Generator) T) {
 	var seed int64 = 0xc0ffee // fixed for snapshots
-	g := FromSource64(rand.NewSource(seed).(rand.Source64))
+	g := rand.NewSource(seed).(rand.Source64)
 	numSamples := 100
 
 	seq := make([]T, 0, numSamples)
@@ -40,7 +40,7 @@ func testUniformDistribution[T any](
 ) {
 	testRng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	seed := testRng.Int63()
-	g := FromSource64(rand.NewSource(seed).(rand.Source64))
+	g := rand.NewSource(seed).(rand.Source64)
 	numSamplesPerBin := 1024
 	numSamples := numBins * numSamplesPerBin
 
