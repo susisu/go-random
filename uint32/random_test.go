@@ -49,7 +49,7 @@ func testUniformDistribution[T any](
 	testRng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	seed := testRng.Int63()
 	g := &testGenerator{rand.NewSource(seed).(rand.Source64)}
-	numSamplesPerBin := 1024
+	numSamplesPerBin := 2000
 	numSamples := numBins * numSamplesPerBin
 
 	histogram := make([]int, numBins)
@@ -61,7 +61,7 @@ func testUniformDistribution[T any](
 		histogram[binIndex(v)]++
 	}
 
-	delta := 4 * math.Sqrt(float64(numSamplesPerBin))
+	delta := 4 * math.Sqrt(float64(numSamplesPerBin)*(1.0-1.0/float64(numBins)))
 	for i, c := range histogram {
 		assert.InDeltaf(t, numSamplesPerBin, c, delta,
 			"histogram(%d) = %d should be close to %d, (seed = %d)", i, c, numSamplesPerBin, seed)
