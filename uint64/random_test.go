@@ -122,11 +122,7 @@ func testRealUniformDistribution[T real](
 		numBins,
 		func(v T) int {
 			nv := float64(v-a) / n
-			i := int(math.Floor(nv * float64(numBins)))
-			if i == numBins {
-				i = numBins - 1
-			}
-			return i
+			return int(math.Floor(nv * float64(numBins)))
 		},
 		func(t *testing.T, seed int64, i int, v T) {
 			assert.GreaterOrEqualf(t, v, a,
