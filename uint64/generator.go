@@ -3,7 +3,7 @@ package random
 import "math/rand"
 
 type Generator interface {
-	Next() uint64
+	Uint64() uint64
 }
 
 type source64Generator struct {
@@ -14,6 +14,6 @@ func FromSource64(s rand.Source64) Generator {
 	return &source64Generator{s}
 }
 
-func (g *source64Generator) Next() uint64 {
+func (g *source64Generator) Uint64() uint64 {
 	return g.s.Uint64()
 }

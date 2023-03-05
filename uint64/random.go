@@ -7,32 +7,32 @@ import (
 
 // Int returns a random int value in the interval [-2^n, 2^n-1].
 func Int(g Generator) int {
-	return int(g.Next())
+	return int(g.Uint64())
 }
 
 // Int32 returns a random int32 value in the interval [-2^31, 2^31-1].
 func Int32(g Generator) int32 {
-	return int32(g.Next())
+	return int32(g.Uint64())
 }
 
 // Int64 returns a random int64 value in the interval [-2^63, 2^63-1].
 func Int64(g Generator) int64 {
-	return int64(g.Next())
+	return int64(g.Uint64())
 }
 
 // Uint returns a random uint value in the interval [0, 2^n-1].
 func Uint(g Generator) uint {
-	return uint(g.Next())
+	return uint(g.Uint64())
 }
 
 // Uint32 returns a random uint32 value in the interval [0, 2^32-1].
 func Uint32(g Generator) uint32 {
-	return uint32(g.Next())
+	return uint32(g.Uint64())
 }
 
 // Uint64 returns a random uint64 value in the interval [0, 2^64-1].
 func Uint64(g Generator) uint64 {
-	return g.Next()
+	return g.Uint64()
 }
 
 // uintAtMost returns a random uint value in the interval [0, max].
@@ -164,5 +164,5 @@ func Float64(g Generator) float64 {
 
 // Bool returns a random bool value.
 func Bool(g Generator) bool {
-	return g.Next()&0x1 == 1
+	return g.Uint64()&0x1 == 1
 }
