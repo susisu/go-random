@@ -1,4 +1,4 @@
-package random
+package random_test
 
 import (
 	"math"
@@ -9,20 +9,13 @@ import (
 
 	"github.com/gkampitakis/go-snaps/snaps"
 	"github.com/stretchr/testify/assert"
+	random "github.com/susisu/go-random/uint32"
 )
 
 func TestMain(t *testing.M) {
 	v := t.Run()
 	snaps.Clean(t)
 	os.Exit(v)
-}
-
-type integer interface {
-	int | int32 | int64 | uint | uint32 | uint64
-}
-
-type real interface {
-	float32 | float64
 }
 
 type testGenerator struct {
@@ -33,7 +26,15 @@ func (g *testGenerator) Uint32() uint32 {
 	return uint32(g.src.Uint64())
 }
 
-func testSnapshot[T any](t *testing.T, generate func(g Generator) T) {
+type integer interface {
+	int | int32 | int64 | uint | uint32 | uint64
+}
+
+type real interface {
+	float32 | float64
+}
+
+func testSnapshot[T any](t *testing.T, generate func(g random.Generator) T) {
 	var seed int64 = 0xc0ffee // fixed for snapshots
 	g := &testGenerator{rand.NewSource(seed).(rand.Source64)}
 	numSamples := 100
@@ -51,7 +52,7 @@ func testUniformDistribution[T any](
 	numBins int,
 	binIndex func(v T) int,
 	testEach func(t *testing.T, seed int64, i int, v T),
-	generate func(g Generator) T,
+	generate func(g random.Generator) T,
 ) {
 	testRng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	seed := testRng.Int63()
@@ -78,7 +79,7 @@ func testUniformDistribution[T any](
 func testSmallIntegerUniformDistribution[T integer](
 	t *testing.T,
 	a, b T,
-	generate func(g Generator) T,
+	generate func(g random.Generator) T,
 ) {
 	numBins := int(b - a + 1)
 	testUniformDistribution(
@@ -100,7 +101,7 @@ func testSmallIntegerUniformDistribution[T integer](
 func testLargeIntegerUniformDistribution[T integer](
 	t *testing.T,
 	a, b T,
-	generate func(g Generator) T,
+	generate func(g random.Generator) T,
 ) {
 	numBins := 8
 	n := float64(uint64(b) - uint64(a))
@@ -128,7 +129,7 @@ func testLargeIntegerUniformDistribution[T integer](
 func testRealUniformDistribution[T real](
 	t *testing.T,
 	a, b T,
-	generate func(g Generator) T,
+	generate func(g random.Generator) T,
 ) {
 	numBins := 8
 	n := float64(b - a)
@@ -151,207 +152,207 @@ func testRealUniformDistribution[T real](
 
 func TestInt(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Int)
+		testSnapshot(t, random.Int)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, math.MinInt, math.MaxInt, Int)
+		testLargeIntegerUniformDistribution(t, math.MinInt, math.MaxInt, random.Int)
 	})
 }
 
 func TestInt32(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Int32)
+		testSnapshot(t, random.Int32)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, math.MinInt32, math.MaxInt32, Int32)
+		testLargeIntegerUniformDistribution(t, math.MinInt32, math.MaxInt32, random.Int32)
 	})
 }
 
 func TestInt64(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Int64)
+		testSnapshot(t, random.Int64)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, math.MinInt64, math.MaxInt64, Int64)
+		testLargeIntegerUniformDistribution(t, math.MinInt64, math.MaxInt64, random.Int64)
 	})
 }
 
 func TestUint(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Uint)
+		testSnapshot(t, random.Uint)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, 0, math.MaxUint, Uint)
+		testLargeIntegerUniformDistribution(t, 0, math.MaxUint, random.Uint)
 	})
 }
 
 func TestUint32(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Uint32)
+		testSnapshot(t, random.Uint32)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, 0, math.MaxUint32, Uint32)
+		testLargeIntegerUniformDistribution(t, 0, math.MaxUint32, random.Uint32)
 	})
 }
 
 func TestUint64(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Uint64)
+		testSnapshot(t, random.Uint64)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, 0, math.MaxUint64, Uint64)
+		testLargeIntegerUniformDistribution(t, 0, math.MaxUint64, random.Uint64)
 	})
 }
 
 func TestIntBetween(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, func(g Generator) int {
-			return IntBetween(g, -128, 127)
+		testSnapshot(t, func(g random.Generator) int {
+			return random.IntBetween(g, -128, 127)
 		})
 	})
 
 	t.Run("large distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, math.MinInt, math.MaxInt, func(g Generator) int {
-			return IntBetween(g, math.MinInt, math.MaxInt)
+		testLargeIntegerUniformDistribution(t, math.MinInt, math.MaxInt, func(g random.Generator) int {
+			return random.IntBetween(g, math.MinInt, math.MaxInt)
 		})
 	})
 
 	t.Run("small distribution", func(t *testing.T) {
-		testSmallIntegerUniformDistribution(t, -2, 5, func(g Generator) int {
-			return IntBetween(g, -2, 5)
+		testSmallIntegerUniformDistribution(t, -2, 5, func(g random.Generator) int {
+			return random.IntBetween(g, -2, 5)
 		})
 	})
 }
 
 func TestInt32Between(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, func(g Generator) int32 {
-			return Int32Between(g, -128, 127)
+		testSnapshot(t, func(g random.Generator) int32 {
+			return random.Int32Between(g, -128, 127)
 		})
 	})
 
 	t.Run("large distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, math.MinInt32, math.MaxInt32, func(g Generator) int32 {
-			return Int32Between(g, math.MinInt32, math.MaxInt32)
+		testLargeIntegerUniformDistribution(t, math.MinInt32, math.MaxInt32, func(g random.Generator) int32 {
+			return random.Int32Between(g, math.MinInt32, math.MaxInt32)
 		})
 	})
 
 	t.Run("small distribution", func(t *testing.T) {
-		testSmallIntegerUniformDistribution(t, -2, 5, func(g Generator) int32 {
-			return Int32Between(g, -2, 5)
+		testSmallIntegerUniformDistribution(t, -2, 5, func(g random.Generator) int32 {
+			return random.Int32Between(g, -2, 5)
 		})
 	})
 }
 
 func TestInt64Between(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, func(g Generator) int64 {
-			return Int64Between(g, -128, 127)
+		testSnapshot(t, func(g random.Generator) int64 {
+			return random.Int64Between(g, -128, 127)
 		})
 	})
 
 	t.Run("large distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, math.MinInt64, math.MaxInt64, func(g Generator) int64 {
-			return Int64Between(g, math.MinInt64, math.MaxInt64)
+		testLargeIntegerUniformDistribution(t, math.MinInt64, math.MaxInt64, func(g random.Generator) int64 {
+			return random.Int64Between(g, math.MinInt64, math.MaxInt64)
 		})
 	})
 
 	t.Run("small distribution", func(t *testing.T) {
-		testSmallIntegerUniformDistribution(t, -2, 5, func(g Generator) int64 {
-			return Int64Between(g, -2, 5)
+		testSmallIntegerUniformDistribution(t, -2, 5, func(g random.Generator) int64 {
+			return random.Int64Between(g, -2, 5)
 		})
 	})
 }
 
 func TestUintBetween(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, func(g Generator) uint {
-			return UintBetween(g, 0, 256)
+		testSnapshot(t, func(g random.Generator) uint {
+			return random.UintBetween(g, 0, 256)
 		})
 	})
 
 	t.Run("large distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, 0, math.MaxInt, func(g Generator) uint {
-			return UintBetween(g, 0, math.MaxInt)
+		testLargeIntegerUniformDistribution(t, 0, math.MaxInt, func(g random.Generator) uint {
+			return random.UintBetween(g, 0, math.MaxInt)
 		})
 	})
 
 	t.Run("small distribution", func(t *testing.T) {
-		testSmallIntegerUniformDistribution(t, 2, 9, func(g Generator) uint {
-			return UintBetween(g, 2, 9)
+		testSmallIntegerUniformDistribution(t, 2, 9, func(g random.Generator) uint {
+			return random.UintBetween(g, 2, 9)
 		})
 	})
 }
 
 func TestUint32Between(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, func(g Generator) uint32 {
-			return Uint32Between(g, 0, 256)
+		testSnapshot(t, func(g random.Generator) uint32 {
+			return random.Uint32Between(g, 0, 256)
 		})
 	})
 
 	t.Run("large distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, 0, math.MaxInt32, func(g Generator) uint32 {
-			return Uint32Between(g, 0, math.MaxInt32)
+		testLargeIntegerUniformDistribution(t, 0, math.MaxInt32, func(g random.Generator) uint32 {
+			return random.Uint32Between(g, 0, math.MaxInt32)
 		})
 	})
 
 	t.Run("small distribution", func(t *testing.T) {
-		testSmallIntegerUniformDistribution(t, 2, 9, func(g Generator) uint32 {
-			return Uint32Between(g, 2, 9)
+		testSmallIntegerUniformDistribution(t, 2, 9, func(g random.Generator) uint32 {
+			return random.Uint32Between(g, 2, 9)
 		})
 	})
 }
 
 func TestUint64Between(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, func(g Generator) uint64 {
-			return Uint64Between(g, 0, 256)
+		testSnapshot(t, func(g random.Generator) uint64 {
+			return random.Uint64Between(g, 0, 256)
 		})
 	})
 
 	t.Run("large distribution", func(t *testing.T) {
-		testLargeIntegerUniformDistribution(t, 0, math.MaxInt64, func(g Generator) uint64 {
-			return Uint64Between(g, 0, math.MaxInt64)
+		testLargeIntegerUniformDistribution(t, 0, math.MaxInt64, func(g random.Generator) uint64 {
+			return random.Uint64Between(g, 0, math.MaxInt64)
 		})
 	})
 
 	t.Run("small distribution", func(t *testing.T) {
-		testSmallIntegerUniformDistribution(t, 2, 9, func(g Generator) uint64 {
-			return Uint64Between(g, 2, 9)
+		testSmallIntegerUniformDistribution(t, 2, 9, func(g random.Generator) uint64 {
+			return random.Uint64Between(g, 2, 9)
 		})
 	})
 }
 
 func TestFloat32(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Float32)
+		testSnapshot(t, random.Float32)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testRealUniformDistribution(t, 0, 1.0, Float32)
+		testRealUniformDistribution(t, 0, 1.0, random.Float32)
 	})
 }
 
 func TestFloat64(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Float64)
+		testSnapshot(t, random.Float64)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
-		testRealUniformDistribution(t, 0, 1.0, Float64)
+		testRealUniformDistribution(t, 0, 1.0, random.Float64)
 	})
 }
 
 func TestBool(t *testing.T) {
 	t.Run("snapshot", func(t *testing.T) {
-		testSnapshot(t, Bool)
+		testSnapshot(t, random.Bool)
 	})
 
 	t.Run("distribution", func(t *testing.T) {
@@ -369,7 +370,7 @@ func TestBool(t *testing.T) {
 			func(t *testing.T, seed int64, i int, v bool) {
 				// nothing to test
 			},
-			Bool,
+			random.Bool,
 		)
 	})
 }
