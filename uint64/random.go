@@ -87,6 +87,7 @@ func uint64AtMost(g Generator, max uint64) uint64 {
 }
 
 // IntBetween returns a random int value in the interval [min, max].
+// It panics if min > max is given.
 func IntBetween(g Generator, min, max int) int {
 	if min == max {
 		return min
@@ -98,6 +99,7 @@ func IntBetween(g Generator, min, max int) int {
 }
 
 // Int32Between returns a random int32 value in the interval [min, max].
+// It panics if min > max is given.
 func Int32Between(g Generator, min, max int32) int32 {
 	if min == max {
 		return min
@@ -109,6 +111,7 @@ func Int32Between(g Generator, min, max int32) int32 {
 }
 
 // Int64Between returns a random int64 value in the interval [min, max].
+// It panics if min > max is given.
 func Int64Between(g Generator, min, max int64) int64 {
 	if min == max {
 		return min
@@ -120,6 +123,7 @@ func Int64Between(g Generator, min, max int64) int64 {
 }
 
 // UintBetween returns a random uint value in the interval [min, max].
+// It panics if min > max is given.
 func UintBetween(g Generator, min, max uint) uint {
 	if min == max {
 		return min
@@ -131,6 +135,7 @@ func UintBetween(g Generator, min, max uint) uint {
 }
 
 // Uint32Between returns a random uint32 value in the interval [min, max].
+// It panics if min > max is given.
 func Uint32Between(g Generator, min, max uint32) uint32 {
 	if min == max {
 		return min
@@ -142,6 +147,7 @@ func Uint32Between(g Generator, min, max uint32) uint32 {
 }
 
 // Uint64Between returns a random uint64 value in the interval [min, max].
+// It panics if min > max is given.
 func Uint64Between(g Generator, min, max uint64) uint64 {
 	if min == max {
 		return min
