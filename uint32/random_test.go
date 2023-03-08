@@ -3,12 +3,19 @@ package random
 import (
 	"math"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/gkampitakis/go-snaps/snaps"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(t *testing.M) {
+	v := t.Run()
+	snaps.Clean(t)
+	os.Exit(v)
+}
 
 type integer interface {
 	int | int32 | int64 | uint | uint32 | uint64
