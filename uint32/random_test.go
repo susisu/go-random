@@ -26,6 +26,13 @@ func (g *testGenerator) Uint32() uint32 {
 	return uint32(g.src.Uint64())
 }
 
+func initTestGenerator() *testGenerator {
+	testRng := rand.New(rand.NewSource(time.Now().UnixNano()))
+	seed := testRng.Int63()
+	g := &testGenerator{rand.NewSource(seed).(rand.Source64)}
+	return g
+}
+
 type integer interface {
 	int | int32 | int64 | uint | uint32 | uint64
 }
@@ -211,6 +218,11 @@ func TestUint64(t *testing.T) {
 }
 
 func TestIntBetween(t *testing.T) {
+	t.Run("panics if min > max", func(t *testing.T) {
+		g := initTestGenerator()
+		assert.Panics(t, func() { random.IntBetween(g, -127, -128) })
+	})
+
 	t.Run("snapshot", func(t *testing.T) {
 		testSnapshot(t, func(g random.Generator) int {
 			return random.IntBetween(g, -128, 127)
@@ -231,6 +243,11 @@ func TestIntBetween(t *testing.T) {
 }
 
 func TestInt32Between(t *testing.T) {
+	t.Run("panics if min > max", func(t *testing.T) {
+		g := initTestGenerator()
+		assert.Panics(t, func() { random.Int32Between(g, -127, -128) })
+	})
+
 	t.Run("snapshot", func(t *testing.T) {
 		testSnapshot(t, func(g random.Generator) int32 {
 			return random.Int32Between(g, -128, 127)
@@ -251,6 +268,11 @@ func TestInt32Between(t *testing.T) {
 }
 
 func TestInt64Between(t *testing.T) {
+	t.Run("panics if min > max", func(t *testing.T) {
+		g := initTestGenerator()
+		assert.Panics(t, func() { random.Int64Between(g, -127, -128) })
+	})
+
 	t.Run("snapshot", func(t *testing.T) {
 		testSnapshot(t, func(g random.Generator) int64 {
 			return random.Int64Between(g, -128, 127)
@@ -271,6 +293,11 @@ func TestInt64Between(t *testing.T) {
 }
 
 func TestUintBetween(t *testing.T) {
+	t.Run("panics if min > max", func(t *testing.T) {
+		g := initTestGenerator()
+		assert.Panics(t, func() { random.UintBetween(g, 128, 127) })
+	})
+
 	t.Run("snapshot", func(t *testing.T) {
 		testSnapshot(t, func(g random.Generator) uint {
 			return random.UintBetween(g, 0, 256)
@@ -291,6 +318,11 @@ func TestUintBetween(t *testing.T) {
 }
 
 func TestUint32Between(t *testing.T) {
+	t.Run("panics if min > max", func(t *testing.T) {
+		g := initTestGenerator()
+		assert.Panics(t, func() { random.Uint32Between(g, 128, 127) })
+	})
+
 	t.Run("snapshot", func(t *testing.T) {
 		testSnapshot(t, func(g random.Generator) uint32 {
 			return random.Uint32Between(g, 0, 256)
@@ -311,6 +343,11 @@ func TestUint32Between(t *testing.T) {
 }
 
 func TestUint64Between(t *testing.T) {
+	t.Run("panics if min > max", func(t *testing.T) {
+		g := initTestGenerator()
+		assert.Panics(t, func() { random.Uint64Between(g, 128, 127) })
+	})
+
 	t.Run("snapshot", func(t *testing.T) {
 		testSnapshot(t, func(g random.Generator) uint64 {
 			return random.Uint64Between(g, 0, 256)
