@@ -18,7 +18,10 @@ The functions for each type are exported from separate pacakges, so use the appr
 Here is an example using the uint64 version:
 
 ``` go
+package main
+
 import (
+	"fmt"
 	"math/rand"
 
 	random "github.com/susisu/go-random/uint64"
